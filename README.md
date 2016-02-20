@@ -64,7 +64,7 @@ Registers an event listener for the required event
 
 ```handler``` must be a function.
 
-### ```stop()```
+#### ```stop()```
 Stops the activity detector and cleans the listeners.
 
 ## Development
