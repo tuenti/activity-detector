@@ -1,0 +1,40 @@
+{
+  "name": "activity-detector",
+  "version": "1.0.0",
+  "description": "Detects when a user is really using your page and when he is idle",
+  "main": "dist/activity-detector.js",
+  "scripts": {
+    "test": "npm run lint && ./node_modules/.bin/tape -r babel-register 'tests/**/*.js' | ./node_modules/.bin/faucet",
+    "lint": "./node_modules/.bin/eslint src/ tests/",
+    "build": "./node_modules/.bin/babel -d dist/ src/",
+    "clean": "rm -r node_modules dist",
+    "prepublish": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tuenti/activity-detector.git"
+  },
+  "keywords": [
+    "user",
+    "activity",
+    "away",
+    "idle",
+    "active"
+  ],
+  "author": "atabel87@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tuenti/activity-detector/issues"
+  },
+  "homepage": "https://github.com/tuenti/activity-detector#readme",
+  "devDependencies": {
+    "babel-cli": "^6.5.1",
+    "babel-preset-es2015": "^6.5.0",
+    "babel-register": "^6.5.2",
+    "eslint": "^2.2.0",
+    "faucet": "0.0.1",
+    "jsdom": "^8.0.4",
+    "sinon": "^1.17.3",
+    "tape": "^4.4.0"
+  }
+}
