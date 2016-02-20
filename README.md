@@ -2,6 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/activity-detector.svg)](https://www.npmjs.com/package/activity-detector)
 [![npm](https://img.shields.io/npm/l/activity-detector.svg)](https://www.npmjs.com/package/activity-detector)
+[![Build Status](https://travis-ci.org/tuenti/activity-detector.svg)](https://travis-ci.org/tuenti/activity-detector)
 
 This module helps you detecting when the user becomes idle (does not interact with the page for some time) or active in your page.
 
