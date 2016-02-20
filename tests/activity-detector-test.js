@@ -1,5 +1,5 @@
 import test from 'tape';
-import createActivityDetector from '../activity-detector.js';
+import createActivityDetector from '..';
 import {jsdom} from 'jsdom';
 import sinon from 'sinon';
 
