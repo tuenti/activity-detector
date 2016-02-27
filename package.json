@@ -1,6 +1,6 @@
 {
   "name": "activity-detector",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Detects when a user is really using your page and when he is idle",
   "main": "dist/activity-detector.js",
   "scripts": {
