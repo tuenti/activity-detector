@@ -7,8 +7,9 @@
     "test": "npm run lint && ./node_modules/.bin/tape -r babel-register 'tests/**/*.js' | ./node_modules/.bin/faucet",
     "lint": "./node_modules/.bin/eslint src/ tests/",
     "build": "./node_modules/.bin/babel -d dist/ src/",
+    "build:umd": "./node_modules/.bin/webpack -p src/activity-detector.js dist/activity-detector.min.js",
     "clean": "rm -r node_modules dist",
-    "prepublish": "npm run build"
+    "prepublish": "npm run build; npm run build:umd"
   },
   "repository": {
     "type": "git",
@@ -29,12 +30,15 @@
   "homepage": "https://github.com/tuenti/activity-detector#readme",
   "devDependencies": {
     "babel-cli": "^6.5.1",
+    "babel-loader": "^6.2.4",
+    "babel-plugin-add-module-exports": "^0.1.2",
     "babel-preset-es2015": "^6.5.0",
     "babel-register": "^6.5.2",
     "eslint": "^2.2.0",
     "faucet": "0.0.1",
     "jsdom": "^8.0.4",
     "sinon": "^1.17.3",
-    "tape": "^4.4.0"
+    "tape": "^4.4.0",
+    "webpack": "^1.12.14"
   }
 }
