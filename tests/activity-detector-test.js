@@ -1,17 +1,16 @@
 import test from 'tape';
-import createActivityDetector from '..';
-import {jsdom} from 'jsdom';
+import './dom-setup';
+import createActivityDetector from '../src/activity-detector';
 import sinon from 'sinon';
 
-// init jsdom
-global.document = jsdom();
-global.window = document.defaultView;
-
-const fireEvent = eventName => {
+const fireEvent = (where, eventName) => {
     const event = document.createEvent('HTMLEvents');
     event.initEvent(eventName, true, true);
-    document.dispatchEvent(event);
+    where.dispatchEvent(event);
 };
+
+const fireWinEvent = eventName => fireEvent(window, eventName);
+const fireDocEvent = eventName => fireEvent(document, eventName);
 
 /**
  * This aditional time is needed when mocking the time because
@@ -48,7 +47,7 @@ test('Activity detector does not fire "idle" event when activity', t => {
     activityDetector.on('idle', onIdle);
 
     clock.tick(shortTime);
-    fireEvent('click');
+    fireWinEvent('click');
     clock.tick(timeToIdle - shortTime);
 
     t.notOk(onIdle.called, 'onIdle callback is not called');
@@ -68,7 +67,7 @@ test('Activity detector fires "idle" 30s after last user activity', t => {
     activityDetector.on('idle', onIdle);
 
     clock.tick(shortTime);
-    fireEvent('click');
+    fireWinEvent('click');
     clock.tick(timeToIdle);
 
     t.ok(onIdle.called, 'onIdle callback is called');
@@ -99,7 +98,7 @@ test('Activity detector fires "active" event when activity registered after bein
                 t.end();
             });
 
-            fireEvent(eventName);
+            fireWinEvent(eventName);
         })
     );
     t.end();
@@ -114,7 +113,32 @@ test('Activity detector fires "idle" event when the window goes background', t =
         t.end();
     });
 
-    fireEvent('blur');
+    fireWinEvent('blur');
+});
+
+test('ActivityDetector fires "idle" event when document becomes hidden', t => {
+    const activityDetector = createActivityDetector();
+
+    activityDetector.on('idle', () => {
+        t.pass('onIdle callback is called');
+        activityDetector.stop();
+        t.end();
+    });
+    document.hidden = true;
+    fireDocEvent('visibilitychange');
+});
+
+test('ActivityDetector fires "active" event when document becomes visible', t => {
+    const activityDetector = createActivityDetector({initialState: 'idle'});
+
+    activityDetector.on('active', () => {
+        t.pass('onActive callback is called');
+        activityDetector.stop();
+        t.end();
+    });
+
+    document.hidden = false;
+    fireDocEvent('visibilitychange');
 });
 
 test('Activity detector accepts multiple callbacks for the same event', t => {
@@ -129,5 +153,5 @@ test('Activity detector accepts multiple callbacks for the same event', t => {
         t.end();
     });
 
-    fireEvent('blur');
+    fireWinEvent('blur');
 });

@@ -17,6 +17,18 @@ const DEFAULT_ACTIVITY_EVENTS = [
 
 const DEFAULT_INACTIVITY_EVENTS = ['blur'];
 
+let hidden, visibilityChangeEvent;
+if (typeof document.hidden !== 'undefined') {
+    hidden = 'hidden';
+    visibilityChangeEvent = 'visibilitychange';
+} else {
+    const prefix = ['webkit', 'moz', 'ms'].find(vendorPrefix => typeof document[`${vendorPrefix}Hidden`] !== undefined);
+    if (prefix) {
+        hidden = `${prefix}Hidden`;
+        visibilityChangeEvent = `${prefix}visibilitychange`;
+    }
+}
+
 /**
  * Creates an activity detector instance
  * @param  {Object}   options
@@ -60,6 +72,11 @@ const activityDetector = ({
         setState(IDLE);
     };
 
+    const handleVisibilityChangeEvent = () => {
+        clearTimeout(timer);
+        setState(document[hidden] ? IDLE : ACTIVE);
+    };
+
     /**
      * Starts the activity detector with the given state.
      * @param {string} firstState 'iddle' or 'active' (default)
@@ -72,6 +89,10 @@ const activityDetector = ({
 
         inactivityEvents.forEach(eventName =>
             window.addEventListener(eventName, handleUserInactivityEvent));
+
+        if (visibilityChangeEvent) {
+            document.addEventListener(visibilityChangeEvent, handleVisibilityChangeEvent);
+        }
     };
 
     /**
@@ -97,6 +118,10 @@ const activityDetector = ({
 
         inactivityEvents.forEach(eventName =>
             window.removeEventListener(eventName, handleUserInactivityEvent));
+
+        if (visibilityChangeEvent) {
+            document.removeEventListener(visibilityChangeEvent, handleVisibilityChangeEvent);
+        }
     };
 
     if (autoInit) {
