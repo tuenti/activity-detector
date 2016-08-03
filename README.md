@@ -10,6 +10,12 @@ This module helps you detecting when the user becomes idle (does not interact wi
 ```
 $ npm install --save activity-detector
 ```
+
+Or load it from npmcdn:
+```html
+<script src="https://npmcdn.com/activity-detector/dist/activity-detector.min.js"></script>
+```
+
 ## How to use
 ### Basic example
 ```javascript
