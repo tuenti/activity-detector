@@ -77,7 +77,7 @@ const activityDetector = ({
         }
     };
 
-    const handleUserInactivityEvent = (event) => {
+    const handleUserInactivityEvent = () => {
         setState(IDLE);
     };
 
