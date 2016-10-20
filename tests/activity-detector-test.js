@@ -3,10 +3,10 @@ import './dom-setup';
 import createActivityDetector from '../src/activity-detector';
 import sinon from 'sinon';
 
-const fireEvent = (where, eventName) => {
+const fireEvent = (target, eventName) => {
     const event = document.createEvent('HTMLEvents');
     event.initEvent(eventName, true, true);
-    where.dispatchEvent(event);
+    target.dispatchEvent(event);
 };
 
 const fireWinEvent = eventName => fireEvent(window, eventName);
@@ -17,39 +17,40 @@ const fireDocEvent = eventName => fireEvent(document, eventName);
  * callbacks are executed asynchronously, so we can not spy
  * callbacks until at least 1 tick after the timeToIdle.
  */
-const ASYNC_CALLBACK_DELAY = 1;
-
 test('Activity detector fires "idle" event when no activity', t => {
     const clock = sinon.useFakeTimers();
     const onIdle = sinon.spy();
-    const timeToIdle = 30000 + ASYNC_CALLBACK_DELAY;
+    const timeToIdle = 30000;
 
-    const activityDetector = createActivityDetector();
+    const activityDetector = createActivityDetector({timeToIdle});
     activityDetector.on('idle', onIdle);
 
     clock.tick(timeToIdle);
-    clock.tick(1);
-    clock.restore();
 
     t.ok(onIdle.called, 'onIdle callback is called');
 
     activityDetector.stop();
+
+    clock.restore();
     t.end();
 });
 
 test('Activity detector does not fire "idle" event when activity', t => {
     const clock = sinon.useFakeTimers();
     const onIdle = sinon.spy();
-    const timeToIdle = 30000 + ASYNC_CALLBACK_DELAY;
-    const shortTime = 10000;
+    const timeToIdle = 30000;
+    const shortTime = 25000;
 
-    const activityDetector = createActivityDetector();
+    const activityDetector = createActivityDetector({timeToIdle});
     activityDetector.on('idle', onIdle);
 
     clock.tick(shortTime);
     fireWinEvent('click');
-    clock.tick(timeToIdle - shortTime);
 
+    clock.tick(shortTime);
+    fireWinEvent('click');
+
+    clock.tick(shortTime);
     t.notOk(onIdle.called, 'onIdle callback is not called');
 
     clock.restore();
@@ -60,10 +61,10 @@ test('Activity detector does not fire "idle" event when activity', t => {
 test('Activity detector fires "idle" 30s after last user activity', t => {
     const clock = sinon.useFakeTimers();
     const onIdle = sinon.spy();
-    const timeToIdle = 30000 + ASYNC_CALLBACK_DELAY;
+    const timeToIdle = 30000;
     const shortTime = 10000;
 
-    const activityDetector = createActivityDetector();
+    const activityDetector = createActivityDetector({timeToIdle});
     activityDetector.on('idle', onIdle);
 
     clock.tick(shortTime);
@@ -78,7 +79,7 @@ test('Activity detector fires "idle" 30s after last user activity', t => {
 });
 
 test('Activity detector fires "active" event when activity registered after being idle', t => {
-    [
+    const activityEvents = [
         'click',
         'mousemove',
         'keydown',
@@ -88,9 +89,11 @@ test('Activity detector fires "active" event when activity registered after bein
         'touchstart',
         'touchmove',
         'focus',
-    ].forEach(eventName =>
+    ];
+    const ignoredEventsWhenIdle = [];
+    activityEvents.forEach(eventName =>
         t.test(`Fires "active" for user event ${eventName}`, t => {
-            const activityDetector = createActivityDetector({initialState: 'idle'});
+            const activityDetector = createActivityDetector({initialState: 'idle', activityEvents, ignoredEventsWhenIdle});
 
             activityDetector.on('active', () => {
                 t.pass('onActive callback is called');
@@ -150,8 +153,46 @@ test('Activity detector accepts multiple callbacks for the same event', t => {
         new Promise(fulfill => activityDetector.on('idle', fulfill)),
     ]).then(() => {
         t.pass('all the callbacks where called');
+        activityDetector.stop();
         t.end();
     });
 
     fireWinEvent('blur');
+});
+
+test('Activity detector ignores some events on idle', t => {
+    const ignoredEventsWhenIdle = ['mousemove'];
+    const inactivityEvents = ['blur'];
+    const activityEvents = ['click', 'mousemove'];
+
+    const activityDetector = createActivityDetector({
+        initialState: 'idle',
+        ignoredEventsWhenIdle,
+        activityEvents,
+        inactivityEvents,
+    });
+
+    let isActive = false;
+
+    activityDetector.on('active', () => {
+        isActive = true;
+    });
+    activityDetector.on('idle', () => {
+        isActive = false;
+    });
+
+    fireWinEvent('click');
+    t.true(isActive);
+
+    fireWinEvent('blur');
+    t.false(isActive);
+
+    fireWinEvent('mousemove');
+    t.false(isActive);
+
+    fireWinEvent('click');
+    t.true(isActive);
+
+    activityDetector.stop();
+    t.end();
 });

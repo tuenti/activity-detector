@@ -17,31 +17,40 @@ const DEFAULT_ACTIVITY_EVENTS = [
 
 const DEFAULT_INACTIVITY_EVENTS = ['blur'];
 
+const DEFAULT_IGNORED_EVENTS_WHEN_IDLE = ['mousemove'];
+
 let hidden, visibilityChangeEvent;
 if (typeof document.hidden !== 'undefined') {
     hidden = 'hidden';
     visibilityChangeEvent = 'visibilitychange';
 } else {
-    const prefix = ['webkit', 'moz', 'ms'].find(vendorPrefix => typeof document[`${vendorPrefix}Hidden`] !== undefined);
-    if (prefix) {
-        hidden = `${prefix}Hidden`;
-        visibilityChangeEvent = `${prefix}visibilitychange`;
+    const prefixes = ['webkit', 'moz', 'ms'];
+    for (let i = 0; i < prefixes.length; i++) {
+        const prefix = prefixes[i];
+        if (typeof document[`${prefix}Hidden`] !== 'undefined') {
+            hidden = `${prefix}Hidden`;
+            visibilityChangeEvent = `${prefix}visibilitychange`;
+            break;
+        }
     }
 }
 
 /**
  * Creates an activity detector instance
+ *
  * @param  {Object}   options
- * @param  {String[]} options.activityEvents events which force a transition to 'active'
- * @param  {String[]} options.inactivityEvents events which force a transition to 'idle'
- * @param  {Number}   options.timeToIdle inactivity time in ms to transition to 'idle'
- * @param  {String}   options.initialState one of 'active' or 'idle'
- * @param  {Boolean}  options.autoInit
- * @return {Object} activity detector instance
+ * @param  {string[]} options.activityEvents        Events which force a transition to 'active'
+ * @param  {string[]} options.inactivityEvents      Events which force a transition to 'idle'
+ * @param  {string[]} options.ignoredEventsWhenIdle Events that are ignored in 'idle' state
+ * @param  {number}   options.timeToIdle            Inactivity time in ms to transition to 'idle'
+ * @param  {string}   options.initialState          One of 'active' or 'idle'
+ * @param  {boolean}  options.autoInit
+ * @return {Object}   activity detector instance
  */
 const activityDetector = ({
     activityEvents = DEFAULT_ACTIVITY_EVENTS,
     inactivityEvents = DEFAULT_INACTIVITY_EVENTS,
+    ignoredEventsWhenIdle = DEFAULT_IGNORED_EVENTS_WHEN_IDLE,
     timeToIdle = 30000,
     initialState = DEFAULT_INITIAL_STATE,
     autoInit = true,
@@ -51,39 +60,37 @@ const activityDetector = ({
     let state;
     let timer;
 
-    const setState = newState => {
+    const setState = (newState) => {
+        clearTimeout(timer);
         if (newState === ACTIVE) {
             timer = setTimeout(() => setState(IDLE), timeToIdle);
         }
-
         if (state !== newState) {
             state = newState;
-            listeners[state].forEach(l => setTimeout(l, 0));
+            listeners[state].forEach(l => l());
         }
     };
 
-    const handleUserActivityEvent = () => {
-        clearTimeout(timer);
-        setState(ACTIVE);
+    const handleUserActivityEvent = (event) => {
+        if (state === ACTIVE || ignoredEventsWhenIdle.indexOf(event.type) < 0) {
+            setState(ACTIVE);
+        }
     };
 
-    const handleUserInactivityEvent = () => {
-        clearTimeout(timer);
+    const handleUserInactivityEvent = (event) => {
         setState(IDLE);
     };
 
     const handleVisibilityChangeEvent = () => {
-        clearTimeout(timer);
         setState(document[hidden] ? IDLE : ACTIVE);
     };
 
     /**
      * Starts the activity detector with the given state.
-     * @param {string} firstState 'iddle' or 'active' (default)
+     * @param {string} firstState 'idle' or 'active'
      */
     const init = (firstState = DEFAULT_INITIAL_STATE) => {
-        setState(firstState);
-
+        setState(firstState === ACTIVE ? ACTIVE : IDLE);
         activityEvents.forEach(eventName =>
             window.addEventListener(eventName, handleUserActivityEvent));
 

@@ -4,12 +4,12 @@
   "description": "Detects when a user is really using your page and when he is idle",
   "main": "dist/activity-detector.js",
   "scripts": {
-    "test": "npm run lint && ./node_modules/.bin/tape -r babel-register 'tests/**/*.js' | ./node_modules/.bin/faucet",
-    "lint": "./node_modules/.bin/eslint src/ tests/",
-    "build": "./node_modules/.bin/babel -d dist/ src/",
-    "build:umd": "./node_modules/.bin/webpack -p src/activity-detector.js dist/activity-detector.min.js",
+    "test": "tape -r babel-register 'tests/**/*.js' | faucet",
+    "lint": "eslint src/ tests/",
+    "build": "babel -d dist/ src/",
+    "build:umd": "webpack -p src/activity-detector.js dist/activity-detector.min.js",
     "clean": "rm -r node_modules dist",
-    "prepublish": "npm run build; npm run build:umd"
+    "prepublish": "npm run lint && npm test && npm run clean && npm run build && npm run build:umd"
   },
   "repository": {
     "type": "git",
