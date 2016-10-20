@@ -17,7 +17,9 @@ Or load it from unpkg:
 ```
 
 ## How to use
+
 ### Basic example
+
 ```javascript
 import createActivityDetector from 'activity-detector';
 
@@ -31,13 +33,16 @@ activityDetector.on('active', () => {
 	console.log('The user is using the page');
 });
 ```
+
 ### Advanced options
+
 Activity detector allows you to configure some parameters:
-- ```timeToIdle```: number of milliseconds of inactivity which makes activity detector transition to 'idle' (```30000``` by default),
-- ```activityEvents```: the user events which make activity detector transition from 'idle' to 'active'. The default list of activityEvents is ```['click', 'mousemove', 'keydown', 'DOMMouseScroll', 'mousewheel', 'mousedown', 'touchstart', 'touchmove', 'focus']```
-- ```inactivityEvents```: the list of events which make the activity detector transition from 'active' to 'idle' without waiting for ```timeToIdle``` timeout. By default: ```['blur']```
-- ```initialState```: can be ```"idle"``` or ```"active"``` (```"active"``` by default),
-- ```autoInit```: when ```true``` the activity detector starts just after creation, when ```false```, it doesn't start until you call the ```.init()``` method (```true``` by default),
+- `timeToIdle`: number of milliseconds of inactivity which makes activity detector transition to 'idle' (`30000` by default)
+- `activityEvents`: the user events which make activity detector transition from 'idle' to 'active'. The default list of activityEvents is `['click', 'mousemove', 'keydown', 'DOMMouseScroll', 'mousewheel', 'mousedown', 'touchstart', 'touchmove', 'focus']`
+- `inactivityEvents`: the list of events which make the activity detector transition from 'active' to 'idle' without waiting for `timeToIdle` timeout. By default: `['blur']`
+- `ignoredEventsWhenIdle`: list of events to ignore in idle state. By default: `['mousemove']`
+- `initialState`: can be `"idle"` or `"active"` (`"active"` by default)
+- `autoInit`: when `true` the activity detector starts just after creation, when `false`, it doesn't start until you call the `.init()` method (`true` by default)
 
 For example:
 ```javascript
@@ -57,25 +62,31 @@ activityDetector.init();
 ```
 
 ### Instance methods
+
 An activity detector instance has the following methods:
 
-#### ```start(initialState = 'active')```
-Initializes the activity detector in the given state. This method should only be used if you created the activity detector with the ```autoInit``` option ```false```.
+#### `start(initialState = 'active')`
 
-This method receives the ```initialState``` param. It can be ```'idle'``` or ```'active'``` (default)
+Initializes the activity detector in the given state. This method should only be used if you created the activity detector with the `autoInit` option `false`.
 
-#### ```on(event, handler)```
+This method receives the `initialState` param. It can be `'idle'` or `'active'` (default)
+
+#### `on(event, handler)`
+
 Registers an event listener for the required event
 
-```event``` can be ```'idle'``` or ```'active'```.
+`event` can be `'idle'` or `'active'`.
 
-```handler``` must be a function.
+`handler` must be a function.
 
-#### ```stop()```
+#### `stop()`
+
 Stops the activity detector and cleans the listeners.
 
 ## Development
+
 ### Run tests
+
 ```
 $ npm install
 $ npm test
