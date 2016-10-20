@@ -8,7 +8,7 @@
     "lint": "eslint src/ tests/",
     "build": "babel -d dist/ src/",
     "build:umd": "webpack -p src/activity-detector.js dist/activity-detector.min.js",
-    "clean": "rm -r node_modules dist",
+    "clean": "rimraf dist",
     "prepublish": "npm run lint && npm test && npm run clean && npm run build && npm run build:umd"
   },
   "repository": {
@@ -37,6 +37,7 @@
     "eslint": "^2.2.0",
     "faucet": "0.0.1",
     "jsdom": "8.0.4",
+    "rimraf": "^2.5.4",
     "sinon": "^1.17.3",
     "tape": "^4.4.0",
     "webpack": "^1.12.14"
