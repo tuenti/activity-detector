@@ -109,6 +109,13 @@ const activityDetector = ({
      */
     const on = (eventName, listener) => {
         listeners[eventName].push(listener);
+        const off = () => {
+            const index = listeners[eventName].indexOf(listener);
+            if (index >= 0) {
+                listeners[eventName].splice(index, 1);
+            }
+        };
+        return off;
     };
 
     /**

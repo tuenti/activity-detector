@@ -196,3 +196,24 @@ test('Activity detector ignores some events on idle', t => {
     activityDetector.stop();
     t.end();
 });
+
+test('Listeners can be removed', t => {
+    const clock = sinon.useFakeTimers();
+    const listenerOne = sinon.spy();
+    const listenerTwo = sinon.spy();
+    const timeToIdle = 30000;
+
+    const activityDetector = createActivityDetector({timeToIdle});
+    activityDetector.on('idle', listenerOne);
+    const off = activityDetector.on('idle', listenerTwo);
+    off();
+
+    clock.tick(timeToIdle);
+
+    t.true(listenerOne.called, 'listenerOne is called');
+    t.false(listenerTwo.called, 'listenerTwo is not called because it was removed');
+
+    activityDetector.stop();
+    clock.restore();
+    t.end();
+});
