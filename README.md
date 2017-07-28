@@ -66,7 +66,7 @@ activityDetector.init();
 
 An activity detector instance has the following methods:
 
-#### `start(initialState = 'active')`
+#### `init(initialState = 'active')`
 
 Initializes the activity detector in the given state. This method should only be used if you created the activity detector with the `autoInit` option `false`.
 

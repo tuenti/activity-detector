@@ -45,6 +45,7 @@ if (typeof document.hidden !== 'undefined') {
  * @param  {number}   options.timeToIdle            Inactivity time in ms to transition to 'idle'
  * @param  {string}   options.initialState          One of 'active' or 'idle'
  * @param  {boolean}  options.autoInit
+ * @param  {boolean}  options.ignoreVisibilityChangeEvent
  * @return {Object}   activity detector instance
  */
 const activityDetector = ({
