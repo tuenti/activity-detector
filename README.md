@@ -43,6 +43,7 @@ Activity detector allows you to configure some parameters:
 - `ignoredEventsWhenIdle`: list of events to ignore in idle state. By default: `['mousemove']`
 - `initialState`: can be `"idle"` or `"active"` (`"active"` by default)
 - `autoInit`: when `true` the activity detector starts just after creation, when `false`, it doesn't start until you call the `.init()` method (`true` by default)
+- `ignoreVisibilityChangeEvent`: when `true` the activity detector will ignore the VisibilityChangeEvent, when `false` it'll watch the VisibilityChangeEvent(`false` by default)
 
 For example:
 ```javascript
@@ -65,7 +66,7 @@ activityDetector.init();
 
 An activity detector instance has the following methods:
 
-#### `start(initialState = 'active')`
+#### `init(initialState = 'active')`
 
 Initializes the activity detector in the given state. This method should only be used if you created the activity detector with the `autoInit` option `false`.
 

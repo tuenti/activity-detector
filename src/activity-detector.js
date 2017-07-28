@@ -45,6 +45,7 @@ if (typeof document.hidden !== 'undefined') {
  * @param  {number}   options.timeToIdle            Inactivity time in ms to transition to 'idle'
  * @param  {string}   options.initialState          One of 'active' or 'idle'
  * @param  {boolean}  options.autoInit
+ * @param  {boolean}  options.ignoreVisibilityChangeEvent
  * @return {Object}   activity detector instance
  */
 const activityDetector = ({
@@ -54,6 +55,7 @@ const activityDetector = ({
     timeToIdle = 30000,
     initialState = DEFAULT_INITIAL_STATE,
     autoInit = true,
+    ignoreVisibilityChangeEvent = false,
 } = {}) => {
 
     const listeners = {[ACTIVE]: [], [IDLE]: []};
@@ -97,7 +99,7 @@ const activityDetector = ({
         inactivityEvents.forEach(eventName =>
             window.addEventListener(eventName, handleUserInactivityEvent));
 
-        if (visibilityChangeEvent) {
+        if (!ignoreVisibilityChangeEvent && visibilityChangeEvent) {
             document.addEventListener(visibilityChangeEvent, handleVisibilityChangeEvent);
         }
     };
@@ -133,7 +135,7 @@ const activityDetector = ({
         inactivityEvents.forEach(eventName =>
             window.removeEventListener(eventName, handleUserInactivityEvent));
 
-        if (visibilityChangeEvent) {
+        if (!ignoreVisibilityChangeEvent && visibilityChangeEvent) {
             document.removeEventListener(visibilityChangeEvent, handleVisibilityChangeEvent);
         }
     };
