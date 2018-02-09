@@ -98,7 +98,7 @@ const activityDetector = ({
             .forEach(eventName =>
                 window.addEventListener(eventName, handleUserInactivityEvent));
 
-        if (inactivityEvents.includes('visibilitychange') && visibilityChangeEvent) {
+        if (inactivityEvents.indexOf('visibilitychange') >= 0 && visibilityChangeEvent) {
             document.addEventListener(visibilityChangeEvent, handleVisibilityChangeEvent);
         }
     };
