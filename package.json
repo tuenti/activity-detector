@@ -9,7 +9,7 @@
     "build": "babel -d dist/ src/",
     "build:umd": "webpack -p src/activity-detector.js dist/activity-detector.min.js",
     "clean": "rimraf dist",
-    "prepublish": "npm run lint && npm test && npm run clean && npm run build && npm run build:umd"
+    "prepublishonly": "npm run lint && npm test && npm run clean && npm run build && npm run build:umd"
   },
   "repository": {
     "type": "git",
