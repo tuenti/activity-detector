@@ -15,7 +15,7 @@ const DEFAULT_ACTIVITY_EVENTS = [
     'focus',
 ];
 
-const DEFAULT_INACTIVITY_EVENTS = ['blur'];
+const DEFAULT_INACTIVITY_EVENTS = ['blur', 'visibilitychange'];
 
 const DEFAULT_IGNORED_EVENTS_WHEN_IDLE = ['mousemove'];
 
@@ -94,10 +94,11 @@ const activityDetector = ({
         activityEvents.forEach(eventName =>
             window.addEventListener(eventName, handleUserActivityEvent));
 
-        inactivityEvents.forEach(eventName =>
-            window.addEventListener(eventName, handleUserInactivityEvent));
+        inactivityEvents.filter(eventName => eventName !== 'visibilitychange')
+            .forEach(eventName =>
+                window.addEventListener(eventName, handleUserInactivityEvent));
 
-        if (visibilityChangeEvent) {
+        if (inactivityEvents.includes('visibilitychange') && visibilityChangeEvent) {
             document.addEventListener(visibilityChangeEvent, handleVisibilityChangeEvent);
         }
     };
