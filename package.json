@@ -4,7 +4,7 @@
   "description": "Detects when a user is really using your page and when he is idle",
   "main": "dist/activity-detector.js",
   "scripts": {
-    "test": "tape -r babel-register 'tests/**/*.js' | faucet",
+    "test": "tape -r babel-register tests/**/*.js | faucet",
     "lint": "eslint src/ tests/",
     "build": "babel -d dist/ src/",
     "build:umd": "webpack -p src/activity-detector.js dist/activity-detector.min.js",

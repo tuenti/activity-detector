@@ -193,6 +193,10 @@ test('Activity detector ignores some events on idle', t => {
     fireWinEvent('click');
     t.true(isActive);
 
+    document.hidden = true;
+    fireDocEvent('visibilitychange');
+    t.true(isActive);
+
     activityDetector.stop();
     t.end();
 });
