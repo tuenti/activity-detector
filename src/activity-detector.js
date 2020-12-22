@@ -19,22 +19,6 @@ const DEFAULT_INACTIVITY_EVENTS = ['blur', 'visibilitychange'];
 
 const DEFAULT_IGNORED_EVENTS_WHEN_IDLE = ['mousemove'];
 
-let hidden, visibilityChangeEvent;
-if (typeof document.hidden !== 'undefined') {
-    hidden = 'hidden';
-    visibilityChangeEvent = 'visibilitychange';
-} else {
-    const prefixes = ['webkit', 'moz', 'ms'];
-    for (let i = 0; i < prefixes.length; i++) {
-        const prefix = prefixes[i];
-        if (typeof document[`${prefix}Hidden`] !== 'undefined') {
-            hidden = `${prefix}Hidden`;
-            visibilityChangeEvent = `${prefix}visibilitychange`;
-            break;
-        }
-    }
-}
-
 /**
  * Creates an activity detector instance
  *
@@ -55,6 +39,21 @@ const activityDetector = ({
     initialState = DEFAULT_INITIAL_STATE,
     autoInit = true,
 } = {}) => {
+    let hidden, visibilityChangeEvent;
+    if (typeof document.hidden !== 'undefined') {
+        hidden = 'hidden';
+        visibilityChangeEvent = 'visibilitychange';
+    } else {
+        const prefixes = ['webkit', 'moz', 'ms'];
+        for (let i = 0; i < prefixes.length; i++) {
+            const prefix = prefixes[i];
+            if (typeof document[`${prefix}Hidden`] !== 'undefined') {
+                hidden = `${prefix}Hidden`;
+                visibilityChangeEvent = `${prefix}visibilitychange`;
+                break;
+            }
+        }
+    }
 
     const listeners = {[ACTIVE]: [], [IDLE]: []};
     let state;
